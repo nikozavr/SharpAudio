@@ -25,22 +25,11 @@ namespace SharpAudio.Codec
         /// <param name="stream">The file stream of the target music file.</param>
         /// <param name="engine">The target <see cref="AudioEngine"/></param>
         /// <param name="mixer">The <see cref="Submixer"/> to use</param>
-        public SoundStream(Stream stream, AudioEngine engine, Submixer mixer = null) : this(stream, new SoundSink(engine, mixer))
-        {
-
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SharpAudio.Codec.SoundStream" /> class.
-        /// </summary>
-        /// <param name="stream">The file stream of the target music file.</param>
-        /// <param name="sink">The target <see cref="SoundSink"/> to play on.</param>
         /// <param name="autoDisposeSink">Dispose the <see cref="SoundSink"/> when finished.</param>
-        public SoundStream(Stream stream, SoundSink sink, bool autoDisposeSink = true)
+        public SoundStream(Stream stream, AudioEngine engine, Submixer mixer = null, bool autoDisposeSink = true)
         {
             _targetStream = stream ?? throw new ArgumentNullException(nameof(stream));
             _autoDisposeSink = autoDisposeSink;
-            _soundSink = sink;
 
             if (stream == null)
             {
@@ -81,6 +70,8 @@ namespace SharpAudio.Codec
                     IsStreamed = true;
                 }
             }
+
+            _soundSink = new SoundSink(engine, _decoder.Format, mixer);
 
             _streamThread = new Thread(MainLoop);
             _streamThread.Name = "SoundStream";
