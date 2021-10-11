@@ -9,6 +9,7 @@ Supported backends:
 # Build status
 
 ![Build Status](https://github.com/feliwir/SharpAudio/workflows/CI/badge.svg?branch=master&event=push)
+![Nuget](https://img.shields.io/nuget/v/SharpAudio)
 
 # Example
 
@@ -44,7 +45,7 @@ A high level interface that can load and play sound files is provided in the Sha
     var engine = AudioEngine.CreateDefault();
     var soundStream = new SoundStream(File.OpenRead("test.mp3"), engine);
 
-    soundStream.Volume = 50.0f;
+    soundStream.Volume = 0.5f;
     soundStream.Play();
 ```
 

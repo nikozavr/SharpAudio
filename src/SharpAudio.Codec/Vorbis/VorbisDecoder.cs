@@ -4,12 +4,12 @@ using NVorbis;
 
 namespace SharpAudio.Codec.Vorbis
 {
-    public class VorbisDecoder : Decoder
+    internal class VorbisDecoder : Decoder
     {
         private VorbisReader _reader;
         private float[] _readBuf;
 
-        public override bool IsFinished => throw new NotImplementedException();
+        public override bool IsFinished => _reader.IsEndOfStream;
 
         public override TimeSpan Position => TimeSpan.MinValue;
 
@@ -23,14 +23,14 @@ namespace SharpAudio.Codec.Vorbis
             _audioFormat.BitsPerSample = 16;
             _audioFormat.SampleRate = _reader.SampleRate;
 
-            _numSamples = (int)_reader.TotalSamples;
+            _numSamples = (int) _reader.TotalSamples;
         }
 
         private static void CastBuffer(float[] inBuffer, byte[] outBuffer, int length)
         {
             for (int i = 0; i < length; i++)
             {
-                var temp = (int)(short.MaxValue * inBuffer[i]);
+                var temp = (int) (short.MaxValue * inBuffer[i]);
 
                 if (temp > short.MaxValue)
                 {
@@ -41,8 +41,8 @@ namespace SharpAudio.Codec.Vorbis
                     temp = short.MinValue;
                 }
 
-                outBuffer[2 * i] = (byte)(((short)temp) & 0xFF);
-                outBuffer[2 * i + 1] = (byte)(((short)temp) >> 8);
+                outBuffer[2 * i] = (byte) (((short) temp) & 0xFF);
+                outBuffer[2 * i + 1] = (byte) (((short) temp) >> 8);
             }
         }
 

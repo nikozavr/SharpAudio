@@ -1,39 +1,27 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 using SharpAudio.ALBinding;
 
 namespace SharpAudio.AL
 {
-    internal sealed class ALEngine : AudioEngine
+    internal sealed class ALCapture : AudioCapture
     {
-        private static IntPtr _device;
-        private static IntPtr _context;
-        private bool _floatSupport { get; set; }
+        private static IntPtr _device;      
         private static int usingResource = 0;
 
         public override AudioBackend BackendType => AudioBackend.OpenAL;
         private static Mutex mutex = new Mutex();
 
-        public ALEngine(AudioEngineOptions options)
+        public ALCapture(AudioCaptureOptions options)
         {
             mutex.WaitOne();
             usingResource++;
             if (usingResource == 1)
             {
-                int[] argument = new int[] { AlNative.ALC_FREQUENCY, options.SampleRate };
                 // opens the default device.
-                _device = AlNative.alcOpenDevice(null);
+                _device = AlNative.alcCaptureOpenDevice(null, (uint)options.SampleRate, AlNative.AL_FORMAT_MONO16, 128);
                 checkAlcError();
-                _context = AlNative.alcCreateContext(_device, argument);
-                checkAlcError();
-
-                //
-                AlNative.alcMakeContextCurrent(_context);
-                checkAlcError();
-                _floatSupport = AlNative.alIsExtensionPresent("AL_EXT_FLOAT32");
-                checkAlError();
-
             }
             mutex.ReleaseMutex();
         }
@@ -58,30 +46,16 @@ namespace SharpAudio.AL
             }
         }
 
-        public override AudioBuffer CreateBuffer()
-        {
-            return new ALBuffer();
-        }
-
         protected override void PlatformDispose()
         {
             mutex.WaitOne();
             if (usingResource == 1)
             {
-                if (_context != IntPtr.Zero)
-                {
-                    AlNative.alcSuspendContext(_context);
-                    checkAlcError();
-                }
                 AlNative.alcMakeContextCurrent(IntPtr.Zero);
                 checkAlcError();
 
-                if (_context != IntPtr.Zero)
+                if (_device != IntPtr.Zero)
                 {
-
-                    AlNative.alcDestroyContext(_context);
-                    checkAlcError();
-                    _context = IntPtr.Zero;
                     AlNative.alcCloseDevice(_device);
                     checkAlcError();
                     _device = IntPtr.Zero;
@@ -90,21 +64,6 @@ namespace SharpAudio.AL
                 usingResource = 0;
             }
             mutex.ReleaseMutex();
-        }
-
-        public override Audio3DEngine Create3DEngine()
-        {
-            return new AL3DEngine();
-        }
-
-        public override AudioSource CreateSource(Submixer mixer = null)
-        {
-            return new ALSource();
-        }
-
-        public override Submixer CreateSubmixer()
-        {
-            return new ALSubmixer(this);
         }
     }
 }
