@@ -9,10 +9,30 @@ namespace SharpAudio.Tests
         {
             var mp3Stream = typeof(SoundStreams).Assembly.GetManifestResourceStream("SharpAudio.Tests.Assets.test.mp3");
 
-            var engine = AudioEngine.CreateDefault();
-            using (var soundStream = new SoundStream(mp3Stream, engine))
+            using (var engine = AudioEngine.CreateDefault())
             {
+                using (var soundStream = new SoundStream(mp3Stream, engine))
+                {
+                    soundStream.Play();
+                }
+            }
+        }
+
+        [BackendFact(AudioBackend.OpenAL, AudioBackend.XAudio2)]
+        public void Reuse()
+        {
+            var mp3Stream = typeof(SoundStreams).Assembly.GetManifestResourceStream("SharpAudio.Tests.Assets.test.mp3");
+
+            using (var engine = AudioEngine.CreateDefault())
+            {
+                var soundStream = new SoundStream(mp3Stream, engine);
+
                 soundStream.Play();
+                soundStream.Dispose();
+
+                mp3Stream = typeof(SoundStreams).Assembly.GetManifestResourceStream("SharpAudio.Tests.Assets.test.mp3");
+                soundStream = new SoundStream(mp3Stream, engine);
+                soundStream.Volume = 1.0f;
             }
         }
     }
