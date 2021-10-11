@@ -1,7 +1,4 @@
-using System;
-using SharpAudio.ALBinding;
-
-namespace SharpAudio.AL
+﻿namespace SharpAudio.AL
 {
     internal sealed class ALSubmixer : Submixer
     {
