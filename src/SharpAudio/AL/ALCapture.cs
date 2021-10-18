@@ -7,7 +7,7 @@ namespace SharpAudio.AL
 {
     internal sealed class ALCapture : AudioCapture
     {
-        private static IntPtr _device;      
+        private static IntPtr _device;
         private static int usingResource = 0;
 
         public override AudioBackend BackendType => AudioBackend.OpenAL;

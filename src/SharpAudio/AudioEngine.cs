@@ -55,14 +55,7 @@ namespace SharpAudio
         /// <returns>A new <see cref="AudioEngine"/> using the openal API. If not possible returns null</returns>
         public static AudioEngine CreateOpenAL(AudioEngineOptions options)
         {
-            try
-            {
-                return new AL.ALEngine(options);
-            }
-            catch (TypeInitializationException)
-            {
-                return null;
-            }
+            return new AL.ALEngine(options);
         }
 
         /// <summary>
