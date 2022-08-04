@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
     <PackageReference Include="NativeLibraryLoader" Version="1.0.12" />
-    <PackageReference Update="Nerdbank.GitVersioning" Version="3.4.240" />
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.5.109" />
   </ItemGroup>
 
 </Project>
